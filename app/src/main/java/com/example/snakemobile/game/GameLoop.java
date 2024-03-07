@@ -3,9 +3,10 @@ package com.example.snakemobile.game;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
+import static com.example.snakemobile.utils.Constants.MAX_UPS;
+import static com.example.snakemobile.utils.Constants.UPS_PERIOD;
+
 public class GameLoop extends Thread {
-  private static final double MAX_UPS = 30.0;
-  private static final double UPS_PERIOD = 1E+3 / MAX_UPS;
 
   private final SurfaceHolder surfaceHolder;
   private final Game game;
