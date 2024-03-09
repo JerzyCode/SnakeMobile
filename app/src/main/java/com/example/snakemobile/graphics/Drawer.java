@@ -5,17 +5,24 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import androidx.core.content.ContextCompat;
 import com.example.snakemobile.R;
+import com.example.snakemobile.objects.Fruit;
 import com.example.snakemobile.objects.Snake;
 
 import static com.example.snakemobile.utils.Constants.*;
 
 public class Drawer {
   private final Snake snake;
+  private Fruit fruit;
   private final Context context;
 
-  public Drawer(Snake snake, Context context) {
+  public Drawer(Snake snake, Context context, Fruit fruit) {
+    this.fruit = fruit;
     this.context = context;
     this.snake = snake;
+  }
+
+  public void setFruit(Fruit fruit) {
+    this.fruit = fruit;
   }
 
   public void drawUPS(Canvas canvas, double ups) {
@@ -36,13 +43,24 @@ public class Drawer {
     canvas.drawText("FPS: " + averageFPS, 100, 115, paint);
   }
 
+  public void drawScore(Canvas canvas, int score) {
+    Paint paint = new Paint();
+    int color = ContextCompat.getColor(context, R.color.magenta);
+    paint.setColor(color);
+    paint.setTextSize(50);
+    int x = (NUM_VERTICAL_LINES - 2) * CELL_WIDTH - 15;
+    int y = (NUM_HORIZONTAL_LINES) * CELL_HEIGHT + 5;
+
+    canvas.drawText("SCORE: " + score, x, y, paint);
+  }
+
   public void drawGrid(Canvas canvas, float height, float width) {
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.white));
     paint.setTextSize(50);
 
     // drawing vertical lines
-    for (int i = 0; i <= NUM_VERTICAL_LINES; i++) {
+    for (int i = 0; i <= NUM_HORIZONTAL_LINES; i++) {
       float lineHeight;
       if (i == 0) {
         lineHeight = 0;
@@ -54,7 +72,7 @@ public class Drawer {
     }
 
     // drawing horizontal lines
-    for (int i = 0; i <= NUM_HORIZONTAL_LINES; i++) {
+    for (int i = 0; i <= NUM_VERTICAL_LINES; i++) {
       float lineWidth;
       if (i == 0) {
         lineWidth = 0;
@@ -87,6 +105,12 @@ public class Drawer {
     }
   }
 
+  public void drawFruit(Canvas canvas) {
+    Paint paint = new Paint();
+    paint.setColor(ContextCompat.getColor(context, R.color.yellow));
+    drawOvalInCell(canvas, fruit.getX(), fruit.getY(), paint);
+  }
+
   private void drawRectangleInCell(Canvas canvas, float x, float y, Paint paint) {
     float left = x * CELL_WIDTH;
     float top = y * CELL_HEIGHT;
@@ -94,4 +118,12 @@ public class Drawer {
     float bottom = top + CELL_HEIGHT;
     canvas.drawRect(left, top, right, bottom, paint);
   }
+
+  private void drawOvalInCell(Canvas canvas, float x, float y, Paint paint) {
+    float centerX = x * CELL_WIDTH + CELL_WIDTH / 2.0f;
+    float centerY = y * CELL_HEIGHT + CELL_HEIGHT / 2.0f;
+    float radius = Math.min(CELL_WIDTH, CELL_HEIGHT) / 2.0f;
+    canvas.drawCircle(centerX, centerY, radius, paint);
+  }
+
 }
