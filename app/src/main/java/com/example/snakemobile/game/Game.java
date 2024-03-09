@@ -3,13 +3,11 @@ package com.example.snakemobile.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import com.example.snakemobile.R;
 import com.example.snakemobile.controls.GestureListener;
+import com.example.snakemobile.graphics.Drawer;
 import com.example.snakemobile.objects.Snake;
 
 import static com.example.snakemobile.utils.Constants.*;
@@ -20,6 +18,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   private final GameLoop gameLoop;
   private final Context context;
   private final Snake snake;
+  private final Drawer drawer;
 
   public Game(Context context, GestureListener gestureListener) {
     super(context);
@@ -30,12 +29,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     this.snake = new Snake();
     gestureListener.setSnake(this.snake);
     this.context = context;
+    this.drawer = new Drawer(this.snake, this.context);
     gameLoop = new GameLoop(this, surfaceHolder);
 
     setFocusable(true);
   }
 
-  private void calculateDimensions() {
+  private synchronized void calculateDimensions() {
     CELL_WIDTH = (int)(getWidth() / NUM_HORIZONTAL_LINES);
     CELL_HEIGHT = (int)(getHeight() / NUM_VERTICAL_LINES);
     invalidate();
@@ -61,90 +61,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   @Override
   public void draw(Canvas canvas) {
     super.draw(canvas);
-    drawGrid(canvas);
-    drawUPS(canvas);
-    drawFPS(canvas);
-    drawSnake(canvas);
-  }
-
-  public void drawUPS(Canvas canvas) {
-    String averageUPS = Double.toString(gameLoop.getAverageUPS());
-    Paint paint = new Paint();
-    int color = ContextCompat.getColor(context, R.color.magenta);
-    paint.setColor(color);
-    paint.setTextSize(50);
-    canvas.drawText("UPS: " + averageUPS, 100, 60, paint);
-  }
-
-  public void drawFPS(Canvas canvas) {
-    String averageFPS = Double.toString(gameLoop.getAverageFPS());
-    Paint paint = new Paint();
-    int color = ContextCompat.getColor(context, R.color.magenta);
-    paint.setColor(color);
-    paint.setTextSize(50);
-    canvas.drawText("FPS: " + averageFPS, 100, 115, paint);
-  }
-
-  private void drawGrid(Canvas canvas) {
-    Paint paint = new Paint();
-    paint.setColor(ContextCompat.getColor(context, R.color.white));
-    paint.setTextSize(50);
-
-    // drawing vertical lines
-    for (int i = 0; i <= NUM_VERTICAL_LINES; i++) {
-      float lineHeight;
-      if (i == 0) {
-        lineHeight = 0;
-      }
-      else {
-        lineHeight = i * CELL_HEIGHT - 0.25f;
-      }
-      canvas.drawLine(0, lineHeight, getWidth(), lineHeight, paint);
-    }
-
-    // drawing horizontal lines
-    for (int i = 0; i <= NUM_HORIZONTAL_LINES; i++) {
-      float lineWidth;
-      if (i == 0) {
-        lineWidth = 0;
-      }
-      else {
-        lineWidth = i * CELL_WIDTH - 0.25f;
-      }
-      canvas.drawLine(lineWidth, 0, lineWidth, getHeight(), paint);
-    }
-  }
-
-  private void drawSnake(Canvas canvas) {
-    drawSnakeTail(canvas);
-    drawSnakeHead(canvas);
-  }
-
-  private void drawSnakeHead(Canvas canvas) {
-    Paint paint = new Paint();
-    paint.setColor(ContextCompat.getColor(context, R.color.orange));
-    drawRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
-  }
-
-  private void drawSnakeTail(Canvas canvas) {
-    Paint paint = new Paint();
-    paint.setColor(ContextCompat.getColor(context, R.color.green));
-    int[][] tail = snake.getTail();
-    int length = snake.getLength();
-    for (int i = length - 1; i >= 0; i--) {
-      drawRectangleInCell(canvas, tail[i][0], tail[i][1], paint);
-    }
+    drawer.drawGrid(canvas, getHeight(), getWidth());
+    drawer.drawFPS(canvas, gameLoop.getAverageFPS());
+    drawer.drawUPS(canvas, gameLoop.getAverageUPS());
+    drawer.drawSnake(canvas);
   }
 
   public void update() {
     snake.move();
   }
 
-  private void drawRectangleInCell(Canvas canvas, float x, float y, Paint paint) {
-    float left = x * CELL_WIDTH;
-    float top = y * CELL_HEIGHT;
-    float right = left + CELL_WIDTH;
-    float bottom = top + CELL_HEIGHT;
-    canvas.drawRect(left, top, right, bottom, paint);
-  }
 }
