@@ -67,13 +67,20 @@ public class Snake {
     if (yHead > NUM_HORIZONTAL_LINES - 1)
       yHead = 0;
     if (yHead < 0)
-      yHead = (int)(NUM_HORIZONTAL_LINES - 1);
+      yHead = NUM_HORIZONTAL_LINES - 1;
     if (xHead > NUM_VERTICAL_LINES - 1)
       xHead = 0;
     if (xHead < 0)
-      xHead = (int)(NUM_VERTICAL_LINES - 1);
+      xHead = NUM_VERTICAL_LINES - 1;
 
     tail[0][0] = xHead;
     tail[0][1] = yHead;
   }
+
+  public void eatFruit() {
+    length += 1;
+    tail[length-1][0]=tail[length-2][0];
+    tail[length-1][1]=tail[length-2][1];
+  }
+
 }

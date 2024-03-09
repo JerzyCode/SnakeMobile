@@ -39,8 +39,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private synchronized void calculateDimensions() {
-    CELL_WIDTH = (int)(getWidth() / NUM_VERTICAL_LINES);
-    CELL_HEIGHT = (int)(getHeight() / NUM_HORIZONTAL_LINES);
+    CELL_WIDTH = getWidth() / NUM_VERTICAL_LINES;
+    CELL_HEIGHT = getHeight() / NUM_HORIZONTAL_LINES;
     invalidate();
   }
 
@@ -73,6 +73,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
   public void update() {
     snake.move();
+    snakeEatFruit();
+  }
+
+  private void snakeEatFruit() {
+    System.out.println("SnakeEatFruit()");
+    System.out.println(String.format("Fruit x=%d, y=%d", fruit.getX(), fruit.getY()));
+    System.out.println(String.format("Snake x=%d, y=%d", snake.getxHead(), snake.getyHead()));
+    if (snake.getxHead() == fruit.getX() && snake.getyHead() == fruit.getY()) {
+      snake.eatFruit();
+      fruit = new Fruit(snake.getTail());
+      drawer.setFruit(fruit);
+    }
   }
 
 }
