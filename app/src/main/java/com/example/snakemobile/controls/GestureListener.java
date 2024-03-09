@@ -65,11 +65,9 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
     if (currentDirection == Direction.LEFT || currentDirection == Direction.RIGHT) {
       snake.setDirection(Direction.UP);
     }
-    System.out.println("swipeUp");
   }
 
   private void onSwipeDown(Direction currentDirection) {
-    System.out.println("swipeDown");
     if (currentDirection == Direction.LEFT || currentDirection == Direction.RIGHT) {
       snake.setDirection(Direction.DOWN);
     }
@@ -80,13 +78,11 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
     if (currentDirection == Direction.UP || currentDirection == Direction.DOWN) {
       snake.setDirection(Direction.RIGHT);
     }
-    System.out.println("swipeRight");
   }
 
   public void onSwipeLeft(Direction currentDirection) {
     if (currentDirection == Direction.UP || currentDirection == Direction.DOWN) {
       snake.setDirection(Direction.LEFT);
     }
-    System.out.println("swipeLeft");
   }
 }

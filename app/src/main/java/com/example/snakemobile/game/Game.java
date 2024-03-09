@@ -125,7 +125,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     snake.move();
   }
 
-  private void drawRectangleInCell(Canvas canvas, int x, int y, Paint paint) {
+  private void drawRectangleInCell(Canvas canvas, float x, float y, Paint paint) {
     float left = x * CELL_WIDTH;
     float top = y * CELL_HEIGHT;
     float right = left + CELL_WIDTH;
