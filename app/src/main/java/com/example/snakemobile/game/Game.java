@@ -112,7 +112,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private void drawSnake(Canvas canvas) {
-    System.out.println(String.format("drawSnake(), x = %d, y = %d ", snake.getxHead(), snake.getyHead()));
+//    System.out.println(String.format("drawSnake(), x = %d, y = %d ", snake.getxHead(), snake.getyHead()));
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.green));
     drawRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
