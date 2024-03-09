@@ -20,6 +20,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   private final Context context;
   private final Snake snake;
   private Fruit fruit;
+  private int score;
   private final Drawer drawer;
 
   public Game(Context context, GestureListener gestureListener) {
@@ -27,7 +28,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     SurfaceHolder surfaceHolder = getHolder();
     surfaceHolder.addCallback(this);
-
+    this.score = 0;
     this.snake = new Snake();
     this.fruit = new Fruit(this.snake.getTail());
     gestureListener.setSnake(this.snake);
@@ -69,6 +70,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     drawer.drawUPS(canvas, gameLoop.getAverageUPS());
     drawer.drawSnake(canvas);
     drawer.drawFruit(canvas);
+    drawer.drawScore(canvas, score);
   }
 
   public void update() {
@@ -77,13 +79,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private void snakeEatFruit() {
-    System.out.println("SnakeEatFruit()");
-    System.out.println(String.format("Fruit x=%d, y=%d", fruit.getX(), fruit.getY()));
-    System.out.println(String.format("Snake x=%d, y=%d", snake.getxHead(), snake.getyHead()));
     if (snake.getxHead() == fruit.getX() && snake.getyHead() == fruit.getY()) {
       snake.eatFruit();
       fruit = new Fruit(snake.getTail());
       drawer.setFruit(fruit);
+      score += 10;
     }
   }
 

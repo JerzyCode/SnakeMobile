@@ -43,6 +43,17 @@ public class Drawer {
     canvas.drawText("FPS: " + averageFPS, 100, 115, paint);
   }
 
+  public void drawScore(Canvas canvas, int score) {
+    Paint paint = new Paint();
+    int color = ContextCompat.getColor(context, R.color.magenta);
+    paint.setColor(color);
+    paint.setTextSize(50);
+    int x = (NUM_VERTICAL_LINES - 2) * CELL_WIDTH - 15;
+    int y = (NUM_HORIZONTAL_LINES) * CELL_HEIGHT + 5;
+
+    canvas.drawText("SCORE: " + score, x, y, paint);
+  }
+
   public void drawGrid(Canvas canvas, float height, float width) {
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.white));
