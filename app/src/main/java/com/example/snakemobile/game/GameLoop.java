@@ -28,6 +28,10 @@ public class GameLoop extends Thread {
     return averageFPS;
   }
 
+  public void setRunning(boolean running) {
+    isRunning = running;
+  }
+
   public void startLoop() {
     System.out.println("startLoop()");
     isRunning = true;

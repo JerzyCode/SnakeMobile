@@ -22,8 +22,6 @@ public class Fruit {
     }
     this.x = x;
     this.y = y;
-    System.out.println("Fruit x=" + this.x);
-    System.out.println("Fruiy y=" + this.y);
   }
 
   public int getX() {

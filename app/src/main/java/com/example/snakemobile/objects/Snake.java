@@ -15,7 +15,7 @@ public class Snake {
 
   public Snake() {
     direction = Direction.RIGHT;
-    tail = new int[(int)(NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES)][2];
+    tail = new int[NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES][2];
     this.xHead = 0;
     this.yHead = 0;
     tail[0][0] = xHead;
@@ -77,10 +77,19 @@ public class Snake {
     tail[0][1] = yHead;
   }
 
+  public boolean isSnakeEatItself() {
+    for (int i = 2; i <= length; i++) {
+      if (tail[0][0] == tail[i - 1][0] && tail[0][1] == tail[i - 1][1]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public void eatFruit() {
     length += 1;
-    tail[length-1][0]=tail[length-2][0];
-    tail[length-1][1]=tail[length-2][1];
+    tail[length - 1][0] = tail[length - 2][0];
+    tail[length - 1][1] = tail[length - 2][1];
   }
 
 }
