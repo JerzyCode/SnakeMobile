@@ -2,11 +2,17 @@ package com.example.snakemobile.controls;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import com.example.snakemobile.objects.Snake;
 
 public class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
   private static final int SWIPE_THRESHOLD = 100;
   private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+  private Snake snake;
+
+  public void setSnake(Snake snake) {
+    this.snake = snake;
+  }
 
   @Override
   public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -15,26 +21,10 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
       float diffY = e2.getY() - e1.getY();
       float diffX = e2.getX() - e1.getX();
       if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-          if (diffX <= 0) {
-            onSwipeLeft();
-          }
-          else {
-            onSwipeRight();
-          }
-          result = true;
-        }
+        result = onFlingHorizontal(diffX, velocityX);
       }
       else if (Math.abs(diffY) > Math.abs(diffX)) {
-        if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-          if (diffY <= 0) {
-            onSwipeUp();
-          }
-          else {
-            onSwipeDown();
-          }
-          result = true;
-        }
+        result = onFlingVertical(diffY, velocityY);
       }
     }
     catch (Exception exception) {
@@ -43,20 +33,60 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
     return result;
   }
 
-  private void onSwipeUp() {
+  public boolean onFlingHorizontal(float diffX, float velocityX) {
+    Direction currentDirection = snake.getDirection();
+    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+      if (diffX <= 0) {
+        onSwipeLeft(currentDirection);
+      }
+      else {
+        onSwipeRight(currentDirection);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  public boolean onFlingVertical(float diffY, float velocityY) {
+    Direction currentDirection = snake.getDirection();
+    if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+      if (diffY <= 0) {
+        onSwipeUp(currentDirection);
+      }
+      else {
+        onSwipeDown(currentDirection);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private void onSwipeUp(Direction currentDirection) {
+    if (currentDirection == Direction.LEFT || currentDirection == Direction.RIGHT) {
+      snake.setDirection(Direction.UP);
+    }
     System.out.println("swipeUp");
   }
 
-  private void onSwipeDown() {
+  private void onSwipeDown(Direction currentDirection) {
     System.out.println("swipeDown");
+    if (currentDirection == Direction.LEFT || currentDirection == Direction.RIGHT) {
+      snake.setDirection(Direction.DOWN);
+    }
 
   }
 
-  public void onSwipeRight() {
+  public void onSwipeRight(Direction currentDirection) {
+    if (currentDirection == Direction.UP || currentDirection == Direction.DOWN) {
+      snake.setDirection(Direction.RIGHT);
+    }
     System.out.println("swipeRight");
   }
 
-  public void onSwipeLeft() {
+  public void onSwipeLeft(Direction currentDirection) {
+    if (currentDirection == Direction.UP || currentDirection == Direction.DOWN) {
+      snake.setDirection(Direction.LEFT);
+    }
     System.out.println("swipeLeft");
   }
 }

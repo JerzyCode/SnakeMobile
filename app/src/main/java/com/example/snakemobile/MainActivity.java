@@ -17,12 +17,13 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    gestureDetector = new GestureDetector(this, new GestureListener());
+    GestureListener gestureListener = new GestureListener();
+    gestureDetector = new GestureDetector(this, gestureListener);
 
     Window window = getWindow();
     window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-    setContentView(new Game(this));
+    setContentView(new Game(this, gestureListener));
   }
 
   @Override

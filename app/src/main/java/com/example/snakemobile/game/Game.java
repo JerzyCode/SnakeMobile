@@ -1,5 +1,6 @@
 package com.example.snakemobile.game;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -8,23 +9,26 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.example.snakemobile.R;
+import com.example.snakemobile.controls.GestureListener;
 import com.example.snakemobile.objects.Snake;
 
 import static com.example.snakemobile.utils.Constants.*;
 
+@SuppressLint("ViewConstructor")
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
   private final GameLoop gameLoop;
   private final Context context;
-  private Snake snake;
+  private final Snake snake;
 
-  public Game(Context context) {
+  public Game(Context context, GestureListener gestureListener) {
     super(context);
 
     SurfaceHolder surfaceHolder = getHolder();
     surfaceHolder.addCallback(this);
 
     this.snake = new Snake();
+    gestureListener.setSnake(this.snake);
     this.context = context;
     gameLoop = new GameLoop(this, surfaceHolder);
 
@@ -112,7 +116,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private void drawSnake(Canvas canvas) {
-//    System.out.println(String.format("drawSnake(), x = %d, y = %d ", snake.getxHead(), snake.getyHead()));
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.green));
     drawRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
