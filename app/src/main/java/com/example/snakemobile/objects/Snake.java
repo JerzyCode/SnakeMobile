@@ -2,7 +2,8 @@ package com.example.snakemobile.objects;
 
 import com.example.snakemobile.controls.Direction;
 
-import static com.example.snakemobile.utils.Constants.*;
+import static com.example.snakemobile.utils.Constants.NUM_HORIZONTAL_LINES;
+import static com.example.snakemobile.utils.Constants.NUM_VERTICAL_LINES;
 
 public class Snake {
 
@@ -27,21 +28,24 @@ public class Snake {
   public void setDirection(Direction direction) {
     this.direction = direction;
   }
+  public Direction getDirection() {
+    return direction;
+  }
 
-  public void move(){
+  public void move() {
     switch (direction) {
       case UP -> yHead -= 1;
       case DOWN -> yHead += 1;
       case LEFT -> xHead -= 1;
       case RIGHT -> xHead += 1;
     }
-    if (yHead > NUM_VERTICAL_LINES)
+    if (yHead > NUM_VERTICAL_LINES-1)
       yHead = 0;
     if (yHead < 0)
-      yHead = (int)(NUM_HORIZONTAL_LINES);
-    if (xHead > NUM_HORIZONTAL_LINES )
+      yHead = (int)(NUM_VERTICAL_LINES-1);
+    if (xHead > NUM_HORIZONTAL_LINES-1)
       xHead = 0;
     if (xHead < 0)
-      xHead = (int)(NUM_VERTICAL_LINES);
+      xHead = (int)(NUM_HORIZONTAL_LINES-1);
   }
 }
