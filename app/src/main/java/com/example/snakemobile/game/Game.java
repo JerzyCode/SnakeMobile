@@ -116,9 +116,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private void drawSnake(Canvas canvas) {
+    drawSnakeTail(canvas);
+    drawSnakeHead(canvas);
+  }
+
+  private void drawSnakeHead(Canvas canvas) {
+    Paint paint = new Paint();
+    paint.setColor(ContextCompat.getColor(context, R.color.orange));
+    drawRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
+  }
+
+  private void drawSnakeTail(Canvas canvas) {
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.green));
-    drawRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
+    int[][] tail = snake.getTail();
+    int length = snake.getLength();
+    for (int i = length - 1; i >= 0; i--) {
+      drawRectangleInCell(canvas, tail[i][0], tail[i][1], paint);
+    }
   }
 
   public void update() {
