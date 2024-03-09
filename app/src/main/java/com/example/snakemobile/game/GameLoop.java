@@ -3,8 +3,8 @@ package com.example.snakemobile.game;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-import static com.example.snakemobile.utils.Constants.MAX_UPS;
-import static com.example.snakemobile.utils.Constants.UPS_PERIOD;
+import static com.example.snakemobile.utils.Constants.FPS;
+import static com.example.snakemobile.utils.Constants.UPS;
 
 public class GameLoop extends Thread {
 
@@ -36,72 +36,63 @@ public class GameLoop extends Thread {
 
   @Override
   public void run() {
-    super.run();
-
-    int updateCount = 0;
-    int frameCount = 0;
-
-    long startTime;
+    double timePerFrame = 1000000000.0 / FPS;
+    double timePerUpdate = 1000000000.0 / UPS;
+    long previousTime = System.nanoTime();
     long elapsedTime;
-    long sleepTime;
-
-    Canvas canvas = null;
-    startTime = System.currentTimeMillis();
+    int frames = 0;
+    int updates = 0;
+    long lastCheck = System.currentTimeMillis();
+    double deltaUpdates = 0;
+    double deltaFrames = 0;
 
     while (isRunning) {
-      try {
-        canvas = surfaceHolder.lockCanvas();
-        synchronized (surfaceHolder) {
-          game.update();
-          updateCount++;
+      long currentTime = System.nanoTime();
 
-          game.draw(canvas);
-        }
-      }
-      catch (IllegalArgumentException ex) {
-        ex.printStackTrace();
-      }
-      finally {
-        if (canvas != null) {
-          try {
-            surfaceHolder.unlockCanvasAndPost(canvas);
-            frameCount++;
-          }
-          catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        }
-      }
+      deltaUpdates += (currentTime - previousTime) / timePerUpdate;
+      deltaFrames += (currentTime - previousTime) / timePerFrame;
+      previousTime = currentTime;
 
-      elapsedTime = System.currentTimeMillis() - startTime;
-      sleepTime = (long)(updateCount * UPS_PERIOD - elapsedTime);
-      if (sleepTime > 0) {
+      if (deltaUpdates >= 1) {
+        game.update();
+        updates += 1;
+        deltaUpdates -= 1;
+      }
+      Canvas canvas = null;
+      if (deltaFrames >= 1) {
         try {
-          sleep(sleepTime);
+          canvas = surfaceHolder.lockCanvas();
+          synchronized (surfaceHolder) {
+            game.draw(canvas);
+          }
         }
-        catch (InterruptedException e) {
+        catch (Exception e) {
           e.printStackTrace();
         }
-
+        finally {
+          if (canvas != null) {
+            try {
+              surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+            catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
+        frames += 1;
+        deltaFrames -= 1;
       }
 
-      while (sleepTime < 0 && updateCount < MAX_UPS - 1) {
-        game.update();
-        updateCount++;
-        elapsedTime = System.currentTimeMillis() - startTime;
-        sleepTime = (long)(updateCount * UPS_PERIOD - elapsedTime);
-      }
+      elapsedTime = System.currentTimeMillis() - lastCheck;
 
-      elapsedTime = System.currentTimeMillis() - startTime;
       if (elapsedTime >= 1000) {
-        averageUPS = updateCount / (1E-3 * elapsedTime);
-        averageFPS = frameCount / (1E-3 * elapsedTime);
-        updateCount = 0;
-        frameCount = 0;
-        startTime = System.currentTimeMillis();
+        lastCheck = System.currentTimeMillis();
+        averageUPS = updates / (1E-3 * elapsedTime);
+        averageFPS = frames / (1E-3 * elapsedTime);
+        frames = 0;
+        updates = 0;
       }
     }
   }
-
 }
 
