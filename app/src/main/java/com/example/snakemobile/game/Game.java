@@ -8,16 +8,15 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.example.snakemobile.R;
+import com.example.snakemobile.objects.Snake;
 
-import static com.example.snakemobile.utils.Constants.NUM_HORIZONTAL_LINES;
-import static com.example.snakemobile.utils.Constants.NUM_VERTICAL_LINES;
+import static com.example.snakemobile.utils.Constants.*;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
   private final GameLoop gameLoop;
   private final Context context;
-  private float cellWidth;
-  private float cellHeight;
+  private Snake snake;
 
   public Game(Context context) {
     super(context);
@@ -25,6 +24,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder surfaceHolder = getHolder();
     surfaceHolder.addCallback(this);
 
+    this.snake = new Snake();
     this.context = context;
     gameLoop = new GameLoop(this, surfaceHolder);
 
@@ -32,14 +32,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   private void calculateDimensions() {
-    cellWidth = getWidth() / NUM_HORIZONTAL_LINES;
-    cellHeight = getHeight() / NUM_VERTICAL_LINES;
+    CELL_WIDTH = (int)(getWidth() / NUM_HORIZONTAL_LINES);
+    CELL_HEIGHT = (int)(getHeight() / NUM_VERTICAL_LINES);
     invalidate();
   }
 
   @Override
   public void surfaceCreated(@NonNull SurfaceHolder holder) {
-    //    calculateDimensions();
     gameLoop.startLoop();
 
   }
@@ -61,6 +60,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     drawGrid(canvas);
     drawUPS(canvas);
     drawFPS(canvas);
+    drawSnake(canvas);
   }
 
   public void drawUPS(Canvas canvas) {
@@ -90,10 +90,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     for (int i = 0; i <= NUM_VERTICAL_LINES; i++) {
       float lineHeight;
       if (i == 0) {
-        lineHeight = i * cellHeight;
+        lineHeight = 0;
       }
       else {
-        lineHeight = i * cellHeight - 0.25f;
+        lineHeight = i * CELL_HEIGHT - 0.25f;
       }
       canvas.drawLine(0, lineHeight, getWidth(), lineHeight, paint);
     }
@@ -102,16 +102,31 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     for (int i = 0; i <= NUM_HORIZONTAL_LINES; i++) {
       float lineWidth;
       if (i == 0) {
-        lineWidth = i * cellHeight;
+        lineWidth = 0;
       }
       else {
-        lineWidth = i * cellWidth - 0.25f;
+        lineWidth = i * CELL_WIDTH - 0.25f;
       }
       canvas.drawLine(lineWidth, 0, lineWidth, getHeight(), paint);
     }
   }
 
-  public void update() {
+  private void drawSnake(Canvas canvas) {
+    System.out.println(String.format("drawSnake(), x = %d, y = %d ", snake.getxHead(), snake.getyHead()));
+    Paint paint = new Paint();
+    paint.setColor(ContextCompat.getColor(context, R.color.green));
+    drawRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
+  }
 
+  public void update() {
+    snake.move();
+  }
+
+  private void drawRectangleInCell(Canvas canvas, int x, int y, Paint paint) {
+    float left = x * CELL_WIDTH;
+    float top = y * CELL_HEIGHT;
+    float right = left + CELL_WIDTH;
+    float bottom = top + CELL_HEIGHT;
+    canvas.drawRect(left, top, right, bottom, paint);
   }
 }
