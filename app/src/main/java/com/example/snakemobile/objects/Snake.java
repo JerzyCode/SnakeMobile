@@ -15,7 +15,7 @@ public class Snake {
 
   public Snake() {
     direction = Direction.RIGHT;
-    tail = new int[(int)(NUM_HORIZONTAL_LINES * NUM_VERTICAL_LINES)][2];
+    tail = new int[(int)(NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES)][2];
     this.xHead = 0;
     this.yHead = 0;
     tail[0][0] = xHead;
@@ -64,14 +64,14 @@ public class Snake {
       case LEFT -> xHead -= 1;
       case RIGHT -> xHead += 1;
     }
-    if (yHead > NUM_VERTICAL_LINES - 1)
+    if (yHead > NUM_HORIZONTAL_LINES - 1)
       yHead = 0;
     if (yHead < 0)
-      yHead = (int)(NUM_VERTICAL_LINES - 1);
-    if (xHead > NUM_HORIZONTAL_LINES - 1)
+      yHead = (int)(NUM_HORIZONTAL_LINES - 1);
+    if (xHead > NUM_VERTICAL_LINES - 1)
       xHead = 0;
     if (xHead < 0)
-      xHead = (int)(NUM_HORIZONTAL_LINES - 1);
+      xHead = (int)(NUM_VERTICAL_LINES - 1);
 
     tail[0][0] = xHead;
     tail[0][1] = yHead;

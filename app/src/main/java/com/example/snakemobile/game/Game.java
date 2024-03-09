@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import com.example.snakemobile.controls.GestureListener;
 import com.example.snakemobile.graphics.Drawer;
+import com.example.snakemobile.objects.Fruit;
 import com.example.snakemobile.objects.Snake;
 
 import static com.example.snakemobile.utils.Constants.*;
@@ -18,6 +19,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   private final GameLoop gameLoop;
   private final Context context;
   private final Snake snake;
+  private Fruit fruit;
   private final Drawer drawer;
 
   public Game(Context context, GestureListener gestureListener) {
@@ -27,17 +29,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     surfaceHolder.addCallback(this);
 
     this.snake = new Snake();
+    this.fruit = new Fruit(this.snake.getTail());
     gestureListener.setSnake(this.snake);
     this.context = context;
-    this.drawer = new Drawer(this.snake, this.context);
+    this.drawer = new Drawer(this.snake, this.context, this.fruit);
     gameLoop = new GameLoop(this, surfaceHolder);
 
     setFocusable(true);
   }
 
   private synchronized void calculateDimensions() {
-    CELL_WIDTH = (int)(getWidth() / NUM_HORIZONTAL_LINES);
-    CELL_HEIGHT = (int)(getHeight() / NUM_VERTICAL_LINES);
+    CELL_WIDTH = (int)(getWidth() / NUM_VERTICAL_LINES);
+    CELL_HEIGHT = (int)(getHeight() / NUM_HORIZONTAL_LINES);
     invalidate();
   }
 
@@ -65,6 +68,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     drawer.drawFPS(canvas, gameLoop.getAverageFPS());
     drawer.drawUPS(canvas, gameLoop.getAverageUPS());
     drawer.drawSnake(canvas);
+    drawer.drawFruit(canvas);
   }
 
   public void update() {

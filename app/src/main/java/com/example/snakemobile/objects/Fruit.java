@@ -14,14 +14,16 @@ public class Fruit {
 
   public Fruit(int[][] snakeTail) {
     this.snakeTail = snakeTail;
-    int x = random.nextInt((int)NUM_VERTICAL_LINES);
-    int y = random.nextInt((int)NUM_HORIZONTAL_LINES);
+    int x = random.nextInt(NUM_HORIZONTAL_LINES - 1);
+    int y = random.nextInt(NUM_VERTICAL_LINES - 1);
     while (!areProperCoordinates(x, y)) {
-      x = random.nextInt((int)NUM_VERTICAL_LINES);
-      y = random.nextInt((int)NUM_HORIZONTAL_LINES);
+      x = random.nextInt(NUM_HORIZONTAL_LINES - 1);
+      y = random.nextInt(NUM_VERTICAL_LINES - 1);
     }
     this.x = x;
     this.y = y;
+    System.out.println("Fruit x=" + this.x);
+    System.out.println("Fruiy y=" + this.y);
   }
 
   public int getX() {
