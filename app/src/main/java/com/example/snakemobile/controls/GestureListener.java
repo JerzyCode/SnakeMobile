@@ -17,6 +17,9 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
   @Override
   public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
     boolean result = false;
+    if (!snake.isMoved()) {
+      return true;
+    }
     try {
       float diffY = e2.getY() - e1.getY();
       float diffX = e2.getX() - e1.getX();
@@ -42,6 +45,7 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
       else {
         onSwipeRight(currentDirection);
       }
+      snake.setMoved(false);
       return true;
     }
     return false;
@@ -56,6 +60,7 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
       else {
         onSwipeDown(currentDirection);
       }
+      snake.setMoved(false);
       return true;
     }
     return false;

@@ -14,6 +14,9 @@ public class GameLoop extends Thread {
   private boolean isRunning = false;
   private double averageUPS;
   private double averageFPS;
+  private static final double TIME_PER_FRAME = 1000000000.0 / FPS;
+  private static final double TIME_PER_UPDATE = 1000000000.0 / UPS;
+  private Canvas canvas = null;
 
   public GameLoop(Game game, SurfaceHolder surfaceHolder) {
     this.game = game;
@@ -33,15 +36,12 @@ public class GameLoop extends Thread {
   }
 
   public void startLoop() {
-    System.out.println("startLoop()");
     isRunning = true;
     start();
   }
 
   @Override
   public void run() {
-    double timePerFrame = 1000000000.0 / FPS;
-    double timePerUpdate = 1000000000.0 / UPS;
     long previousTime = System.nanoTime();
     long elapsedTime;
     int frames = 0;
@@ -49,12 +49,11 @@ public class GameLoop extends Thread {
     long lastCheck = System.currentTimeMillis();
     double deltaUpdates = 0;
     double deltaFrames = 0;
-
     while (isRunning) {
       long currentTime = System.nanoTime();
 
-      deltaUpdates += (currentTime - previousTime) / timePerUpdate;
-      deltaFrames += (currentTime - previousTime) / timePerFrame;
+      deltaUpdates += (currentTime - previousTime) / TIME_PER_UPDATE;
+      deltaFrames += (currentTime - previousTime) / TIME_PER_FRAME;
       previousTime = currentTime;
 
       if (deltaUpdates >= 1) {
@@ -62,27 +61,8 @@ public class GameLoop extends Thread {
         updates += 1;
         deltaUpdates -= 1;
       }
-      Canvas canvas = null;
       if (deltaFrames >= 1) {
-        try {
-          canvas = surfaceHolder.lockCanvas();
-          synchronized (surfaceHolder) {
-            game.draw(canvas);
-          }
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-        }
-        finally {
-          if (canvas != null) {
-            try {
-              surfaceHolder.unlockCanvasAndPost(canvas);
-            }
-            catch (Exception e) {
-              e.printStackTrace();
-            }
-          }
-        }
+        drawOnCanvas(() -> game.draw(canvas));
         frames += 1;
         deltaFrames -= 1;
       }
@@ -97,6 +77,39 @@ public class GameLoop extends Thread {
         updates = 0;
       }
     }
+    onGameOver();
+  }
+
+  private void drawOnCanvas(Runnable runnable) {
+    try {
+      canvas = surfaceHolder.lockCanvas();
+      synchronized (surfaceHolder) {
+        runnable.run();
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (canvas != null) {
+        try {
+          surfaceHolder.unlockCanvasAndPost(canvas);
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  private void onGameOver() {
+    drawOnCanvas(() -> game.draw(canvas));
+    drawOnCanvas(() -> game.getDrawer().drawGameOver(canvas));
+  }
+
+  public boolean isRunning() {
+    return isRunning;
   }
 }
+
 

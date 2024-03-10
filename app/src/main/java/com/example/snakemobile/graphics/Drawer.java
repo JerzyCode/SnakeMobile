@@ -65,11 +65,13 @@ public class Drawer {
     Paint paint = new Paint();
     int color = ContextCompat.getColor(context, R.color.red);
     paint.setColor(color);
-    paint.setTextSize(70);
-    int x = 200;
-    int y = 222;
+    paint.setTextSize(150);
+    int x = CELL_WIDTH;
+    int y = SCREEN_HEIGHT / 2;
     System.out.println(String.format("x=%d, y=%d", x, y));
     canvas.drawText("GAME OVER", x, y, paint);
+    paint.setTextSize(50);
+    canvas.drawText("Press anywhere to back to main menu.", CELL_WIDTH-5f, y + 80.0f, paint);
   }
 
   public void drawGrid(Canvas canvas) {
@@ -93,7 +95,7 @@ public class Drawer {
       else {
         lineWidth = i * CELL_WIDTH;
       }
-      canvas.drawLine(lineWidth, 0, lineWidth, SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT, paint);
+      canvas.drawLine(lineWidth, 0, lineWidth, (float)SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT, paint);
     }
   }
 
@@ -111,7 +113,7 @@ public class Drawer {
   private void drawSnakeTail(Canvas canvas) {
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.green));
-    int[][] tail = snake.getTail();
+    float[][] tail = snake.getTail();
     int length = snake.getLength();
     for (int i = length - 1; i >= 0; i--) {
       drawRectangleInCell(canvas, tail[i][0], tail[i][1], paint);
