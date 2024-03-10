@@ -63,23 +63,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-
+    // no implemented yet
   }
 
   @Override
   public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-
+    // no implemented yet
   }
 
   @Override
   public void draw(Canvas canvas) {
     super.draw(canvas);
-    drawer.drawGrid(canvas);
-    //    drawer.drawFPS(canvas, gameLoop.getAverageFPS());
-    //    drawer.drawUPS(canvas, gameLoop.getAverageUPS());
+    //    drawer.drawGrid(canvas);
+    drawer.drawFPS(canvas, gameLoop.getAverageFPS());
+    drawer.drawUPS(canvas, gameLoop.getAverageUPS());
     drawer.drawSnake(canvas);
     drawer.drawFruit(canvas);
     drawer.drawScore(canvas, score);
+//    drawer.drawGameOver(canvas);
   }
 
   public void update() {
@@ -97,7 +98,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
       snake.eatFruit();
       fruit = new Fruit(snake.getTail());
       drawer.setFruit(fruit);
-      score += 10;
+      score += 1;
     }
   }
 
@@ -105,6 +106,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     if (snake.isSnakeEatItself()) {
       gameLoop.setRunning(false);
     }
+  }
+
+  public boolean isGameOver() {
+    return !gameLoop.isRunning();
   }
 
 }

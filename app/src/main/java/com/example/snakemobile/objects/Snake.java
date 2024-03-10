@@ -2,20 +2,26 @@ package com.example.snakemobile.objects;
 
 import com.example.snakemobile.controls.Direction;
 
+import java.util.PriorityQueue;
+import java.util.Queue;
+
 import static com.example.snakemobile.utils.Constants.NUM_HORIZONTAL_LINES;
 import static com.example.snakemobile.utils.Constants.NUM_VERTICAL_LINES;
 
 public class Snake {
 
-  private int xHead;
-  private int yHead;
+  private float xHead;
+  private float yHead;
   private Direction direction;
-  private final int[][] tail;
+  private final float[][] tail;
   private int length;
+  private boolean moved;
+  private Queue<Direction> changeDirectionQueue;
 
   public Snake() {
     direction = Direction.RIGHT;
-    tail = new int[NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES][2];
+    changeDirectionQueue = new PriorityQueue<>();
+    tail = new float[NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES][2];
     this.xHead = 0;
     this.yHead = 0;
     tail[0][0] = xHead;
@@ -23,15 +29,15 @@ public class Snake {
     length = 2;
   }
 
-  public int getxHead() {
+  public float getxHead() {
     return xHead;
   }
 
-  public int getyHead() {
+  public float getyHead() {
     return yHead;
   }
 
-  public int[][] getTail() {
+  public float[][] getTail() {
     return tail;
   }
 
@@ -45,6 +51,18 @@ public class Snake {
 
   public Direction getDirection() {
     return direction;
+  }
+
+  public boolean isMoved() {
+    return moved;
+  }
+
+  public void setMoved(boolean moved) {
+    this.moved = moved;
+  }
+
+  public void addDirection(Direction direction) {
+    changeDirectionQueue.add(direction);
   }
 
   public void move() {
@@ -67,14 +85,16 @@ public class Snake {
     if (yHead > NUM_HORIZONTAL_LINES - 1)
       yHead = 0;
     if (yHead < 0)
-      yHead = NUM_HORIZONTAL_LINES - 1;
+      yHead = NUM_HORIZONTAL_LINES - 1.0f;
     if (xHead > NUM_VERTICAL_LINES - 1)
       xHead = 0;
     if (xHead < 0)
-      xHead = NUM_VERTICAL_LINES - 1;
+      xHead = NUM_VERTICAL_LINES - 1.0f;
 
     tail[0][0] = xHead;
     tail[0][1] = yHead;
+
+    moved = true;
   }
 
   public boolean isSnakeEatItself() {

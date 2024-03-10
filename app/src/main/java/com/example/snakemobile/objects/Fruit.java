@@ -10,9 +10,9 @@ public class Fruit {
   private int x;
   private int y;
   private static final Random random = new Random();
-  private final int[][] snakeTail;
+  private final float[][] snakeTail;
 
-  public Fruit(int[][] snakeTail) {
+  public Fruit(float[][] snakeTail) {
     this.snakeTail = snakeTail;
     int x = random.nextInt(NUM_VERTICAL_LINES - 1);
     int y = random.nextInt(NUM_HORIZONTAL_LINES - 1);
@@ -33,7 +33,7 @@ public class Fruit {
   }
 
   public boolean areProperCoordinates(int x, int y) {
-    for (int[] tab : snakeTail) {
+    for (float[] tab : snakeTail) {
       if (tab[0] == x && tab[1] == y) {
         return false;
       }
