@@ -3,15 +3,16 @@ package com.example.snakemobile.game;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import com.example.snakemobile.controls.GestureListener;
 import com.example.snakemobile.graphics.Drawer;
 import com.example.snakemobile.objects.Fruit;
 import com.example.snakemobile.objects.Snake;
-
-import static com.example.snakemobile.utils.Constants.*;
+import com.example.snakemobile.utils.CustomProperties;
 
 @SuppressLint("ViewConstructor")
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
@@ -28,14 +29,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     SurfaceHolder surfaceHolder = getHolder();
     surfaceHolder.addCallback(this);
+    this.context = context;
+    calculateScreenSize();
+
     this.score = 0;
     this.snake = new Snake();
     this.fruit = new Fruit(this.snake.getTail());
+
     gestureListener.setSnake(this.snake);
-    this.context = context;
     this.drawer = new Drawer(this.snake, this.context, this.fruit);
     gameLoop = new GameLoop(this, surfaceHolder);
-
     setFocusable(true);
   }
 
@@ -43,10 +46,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     return drawer;
   }
 
-  private synchronized void calculateDimensions() {
-    CELL_WIDTH = getWidth() / NUM_VERTICAL_LINES;
-    CELL_HEIGHT = getHeight() / NUM_HORIZONTAL_LINES;
-    invalidate();
+  private void calculateScreenSize() {
+    WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+    DisplayMetrics metrics = new DisplayMetrics();
+    windowManager.getDefaultDisplay().getMetrics(metrics);
+    CustomProperties customProperties = CustomProperties.get();
+    customProperties.setScreenHeight(metrics.heightPixels);
+    customProperties.setScreenWidth(metrics.widthPixels);
   }
 
   @Override
@@ -57,7 +63,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-    calculateDimensions();
 
   }
 
@@ -69,9 +74,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   @Override
   public void draw(Canvas canvas) {
     super.draw(canvas);
-    drawer.drawGrid(canvas, getHeight(), getWidth());
-    drawer.drawFPS(canvas, gameLoop.getAverageFPS());
-    drawer.drawUPS(canvas, gameLoop.getAverageUPS());
+    drawer.drawGrid(canvas);
+    //    drawer.drawFPS(canvas, gameLoop.getAverageFPS());
+    //    drawer.drawUPS(canvas, gameLoop.getAverageUPS());
     drawer.drawSnake(canvas);
     drawer.drawFruit(canvas);
     drawer.drawScore(canvas, score);
@@ -81,6 +86,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     snake.move();
     gameLogic();
   }
+
   private void gameLogic() {
     snakeEatFruit();
     snakeEatItself();

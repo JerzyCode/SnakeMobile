@@ -9,7 +9,5 @@ public class Constants {
   public static final double FPS = 30.0;
   public static final int NUM_HORIZONTAL_LINES = 18;
   public static final int NUM_VERTICAL_LINES = 9;
-
-  public static int CELL_HEIGHT;
-  public static int CELL_WIDTH;
+  public static final int BOTTOM_PANEL_HEIGHT = 64;
 }

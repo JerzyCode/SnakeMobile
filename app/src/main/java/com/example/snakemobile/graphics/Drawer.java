@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import com.example.snakemobile.R;
 import com.example.snakemobile.objects.Fruit;
 import com.example.snakemobile.objects.Snake;
+import com.example.snakemobile.utils.CustomProperties;
 
 import static com.example.snakemobile.utils.Constants.*;
 
@@ -14,6 +15,11 @@ public class Drawer {
   private final Snake snake;
   private Fruit fruit;
   private final Context context;
+  private static final CustomProperties customProperties = CustomProperties.get();
+  private static final int SCREEN_WIDTH = customProperties.getScreenWidth();
+  private static final int SCREEN_HEIGHT = customProperties.getScreenHeight();
+  private static final int CELL_WIDTH = customProperties.getCellWidth();
+  private static final int CELL_HEIGHT = customProperties.getCellHeight();
 
   public Drawer(Snake snake, Context context, Fruit fruit) {
     this.fruit = fruit;
@@ -48,39 +54,46 @@ public class Drawer {
     int color = ContextCompat.getColor(context, R.color.magenta);
     paint.setColor(color);
     paint.setTextSize(50);
-    int x = (NUM_VERTICAL_LINES - 2) * CELL_WIDTH - 15;
-    int y = (NUM_HORIZONTAL_LINES) * CELL_HEIGHT + 5;
+    int x = 1;
+    int y = customProperties.getScreenHeight();
 
     canvas.drawText("SCORE: " + score, x, y, paint);
   }
 
-  public void drawGrid(Canvas canvas, float height, float width) {
+  public void drawGameOver(Canvas canvas) {
+    System.out.println("Draw Game Over");
+    Paint paint = new Paint();
+    int color = ContextCompat.getColor(context, R.color.red);
+    paint.setColor(color);
+    paint.setTextSize(70);
+    int x = 200;
+    int y = 222;
+    System.out.println(String.format("x=%d, y=%d", x, y));
+    canvas.drawText("GAME OVER", x, y, paint);
+  }
+
+  public void drawGrid(Canvas canvas) {
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.white));
     paint.setTextSize(50);
 
-    // drawing vertical lines
+    // drawing horizontal lines
     for (int i = 0; i <= NUM_HORIZONTAL_LINES; i++) {
-      float lineHeight;
-      if (i == 0) {
-        lineHeight = 0;
-      }
-      else {
-        lineHeight = i * CELL_HEIGHT - 0.25f;
-      }
-      canvas.drawLine(0, lineHeight, width, lineHeight, paint);
+      int lineHeight;
+      lineHeight = i * CELL_HEIGHT;
+      canvas.drawLine(0, lineHeight, SCREEN_WIDTH, lineHeight, paint);
     }
 
-    // drawing horizontal lines
+    // drawing vertical lines
     for (int i = 0; i <= NUM_VERTICAL_LINES; i++) {
-      float lineWidth;
-      if (i == 0) {
-        lineWidth = 0;
+      int lineWidth;
+      if (i == NUM_VERTICAL_LINES) {
+        lineWidth = i * CELL_WIDTH - 1;
       }
       else {
-        lineWidth = i * CELL_WIDTH - 0.25f;
+        lineWidth = i * CELL_WIDTH;
       }
-      canvas.drawLine(lineWidth, 0, lineWidth, height, paint);
+      canvas.drawLine(lineWidth, 0, lineWidth, SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT, paint);
     }
   }
 
