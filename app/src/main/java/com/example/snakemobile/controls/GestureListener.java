@@ -17,21 +17,23 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
   @Override
   public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
     boolean result = false;
-    if (!snake.isMoved()) {
-      return true;
-    }
-    try {
-      float diffY = e2.getY() - e1.getY();
-      float diffX = e2.getX() - e1.getX();
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        result = onFlingHorizontal(diffX, velocityX);
+    synchronized (snake) {
+      if (!snake.isMoved()) {
+        return true;
       }
-      else if (Math.abs(diffY) > Math.abs(diffX)) {
-        result = onFlingVertical(diffY, velocityY);
+      try {
+        float diffY = e2.getY() - e1.getY();
+        float diffX = e2.getX() - e1.getX();
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          result = onFlingHorizontal(diffX, velocityX);
+        }
+        else if (Math.abs(diffY) > Math.abs(diffX)) {
+          result = onFlingVertical(diffY, velocityY);
+        }
       }
-    }
-    catch (Exception exception) {
-      exception.printStackTrace();
+      catch (Exception exception) {
+        exception.printStackTrace();
+      }
     }
     return result;
   }

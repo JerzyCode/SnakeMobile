@@ -84,8 +84,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   public void update() {
-    snake.move();
-    gameLogic();
+    synchronized (snake) {
+      snake.move();
+      gameLogic();
+    }
+//    gameLogic();
   }
 
   private void gameLogic() {
