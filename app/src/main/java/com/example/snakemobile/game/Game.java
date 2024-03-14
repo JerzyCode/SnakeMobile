@@ -9,7 +9,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import com.example.snakemobile.controls.GestureListener;
-import com.example.snakemobile.graphics.Drawer;
+import com.example.snakemobile.graphics.Render;
 import com.example.snakemobile.objects.Fruit;
 import com.example.snakemobile.objects.Snake;
 import com.example.snakemobile.utils.CustomProperties;
@@ -22,7 +22,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   private final Snake snake;
   private Fruit fruit;
   private int score;
-  private final Drawer drawer;
+  private final Render render;
 
   public Game(Context context, GestureListener gestureListener) {
     super(context);
@@ -37,13 +37,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     this.fruit = new Fruit(this.snake.getTail());
 
     gestureListener.setSnake(this.snake);
-    this.drawer = new Drawer(this.snake, this.context, this.fruit);
+    this.render = new Render(this.snake, this.context, this.fruit);
     gameLoop = new GameLoop(this, surfaceHolder);
     setFocusable(true);
   }
 
-  public Drawer getDrawer() {
-    return drawer;
+  public Render getRender() {
+    return render;
   }
 
   private void calculateScreenSize() {
@@ -75,17 +75,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   public void draw(Canvas canvas) {
     super.draw(canvas);
     //    drawer.drawGrid(canvas);
-    drawer.drawFPS(canvas, gameLoop.getAverageFPS());
-    drawer.drawUPS(canvas, gameLoop.getAverageUPS());
-    drawer.drawSnake(canvas);
-    drawer.drawFruit(canvas);
-    drawer.drawScore(canvas, score);
-//    drawer.drawGameOver(canvas);
+    render.drawFPS(canvas, gameLoop.getAverageFPS());
+    render.drawUPS(canvas, gameLoop.getAverageUPS());
+    render.renderSnake(canvas);
+    render.renderFruit(canvas);
+    render.drawScore(canvas, score);
   }
 
   public void update() {
-    snake.move();
-    gameLogic();
+    synchronized (snake) {
+      snake.move();
+      gameLogic();
+    }
   }
 
   private void gameLogic() {
@@ -97,7 +98,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     if (snake.getxHead() == fruit.getX() && snake.getyHead() == fruit.getY()) {
       snake.eatFruit();
       fruit = new Fruit(snake.getTail());
-      drawer.setFruit(fruit);
+      render.setFruit(fruit);
       score += 1;
     }
   }
