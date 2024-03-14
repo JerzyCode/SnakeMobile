@@ -60,7 +60,7 @@ public class Render {
     canvas.drawText("SCORE: " + score, x, y, paint);
   }
 
-  public void drawGameOver(Canvas canvas) {
+  public void renderGameOver(Canvas canvas) {
     System.out.println("Draw Game Over");
     Paint paint = new Paint();
     int color = ContextCompat.getColor(context, R.color.red);
@@ -71,7 +71,7 @@ public class Render {
     System.out.println(String.format("x=%d, y=%d", x, y));
     canvas.drawText("GAME OVER", x, y, paint);
     paint.setTextSize(50);
-    canvas.drawText("Press anywhere to back to main menu.", CELL_WIDTH-5f, y + 80.0f, paint);
+    canvas.drawText("Press anywhere to back to main menu.", CELL_WIDTH - 5f, y + 80.0f, paint);
   }
 
   public void drawGrid(Canvas canvas) {
@@ -105,9 +105,7 @@ public class Render {
   }
 
   private void renderSnakeHead(Canvas canvas) {
-    Paint paint = new Paint();
-    paint.setColor(ContextCompat.getColor(context, R.color.orange));
-    renderRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
+    renderSnakeHead(canvas, R.color.red);
   }
 
   private void renderSnakeTail(Canvas canvas) {
@@ -120,10 +118,20 @@ public class Render {
     }
   }
 
+  private void renderSnakeHead(Canvas canvas, int color) {
+    Paint paint = new Paint();
+    paint.setColor(ContextCompat.getColor(context, color));
+    renderOvalInCell(canvas, fruit.getX(), fruit.getY(), paint);
+  }
+
   public void renderFruit(Canvas canvas) {
     Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.yellow));
     renderOvalInCell(canvas, fruit.getX(), fruit.getY(), paint);
+  }
+
+  public void renderSnakeEatItSelf(Canvas canvas) {
+    renderSnakeHead(canvas, R.color.magenta);
   }
 
   private void renderRectangleInCell(Canvas canvas, float x, float y, Paint paint) {

@@ -42,7 +42,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     setFocusable(true);
   }
 
-  public Render getDrawer() {
+  public Render getRender() {
     return render;
   }
 
@@ -80,7 +80,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     render.renderSnake(canvas);
     render.renderFruit(canvas);
     render.drawScore(canvas, score);
-//    drawer.drawGameOver(canvas);
   }
 
   public void update() {
@@ -88,7 +87,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
       snake.move();
       gameLogic();
     }
-//    gameLogic();
   }
 
   private void gameLogic() {
