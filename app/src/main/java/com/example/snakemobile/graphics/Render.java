@@ -105,10 +105,6 @@ public class Render {
     renderSnakeHead(canvas);
   }
 
-  private void renderSnakeHead(Canvas canvas) {
-    renderSnakeHead(canvas, R.color.red);
-  }
-
   private void renderSnakeTail(Canvas canvas) {
     paint.setColor(ContextCompat.getColor(context, R.color.green));
     float[][] tail = snake.getTail();
@@ -118,18 +114,20 @@ public class Render {
     }
   }
 
-  private void renderSnakeHead(Canvas canvas, int color) {
-    paint.setColor(ContextCompat.getColor(context, color));
-    renderRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
+  private void renderSnakeHead(Canvas canvas) {
+    float x = snake.getxHead() * customProperties.getCellWidth();
+    float y = snake.getyHead() * customProperties.getCellHeight();
+    switch (snake.getDirection()) {
+      case DOWN -> canvas.drawBitmap(bitMapFactory.getHeadDownImg(), x, y, null);
+      case UP -> canvas.drawBitmap(bitMapFactory.getHeadUpImg(), x, y, null);
+      case LEFT -> canvas.drawBitmap(bitMapFactory.getHeadLeftImg(), x, y, null);
+      case RIGHT -> canvas.drawBitmap(bitMapFactory.getHeadRightImg(), x, y, null);
+    }
   }
 
   public void renderFruit(Canvas canvas) {
     paint.setColor(ContextCompat.getColor(context, R.color.yellow));
     renderOvalInCell(canvas, fruit.getX(), fruit.getY(), paint);
-  }
-
-  public void renderSnakeEatItSelf(Canvas canvas) {
-    renderSnakeHead(canvas, R.color.magenta);
   }
 
   private void renderRectangleInCell(Canvas canvas, float x, float y, Paint paint) {
