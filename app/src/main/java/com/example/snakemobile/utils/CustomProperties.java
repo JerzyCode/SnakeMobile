@@ -22,7 +22,7 @@ public class CustomProperties {
   }
 
   public void setScreenHeight(int screenHeight) {
-    this.screenHeight = screenHeight - 2 * MARGIN - 10;
+    this.screenHeight = screenHeight - 2 * MARGIN;
     this.horizontalLines = this.screenHeight / UNIT_SIZE;
   }
 

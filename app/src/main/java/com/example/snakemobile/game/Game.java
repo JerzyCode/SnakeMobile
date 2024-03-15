@@ -76,7 +76,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   public void draw(Canvas canvas) {
     super.draw(canvas);
     render.renderBackground(canvas);
-    //    render.drawGrid(canvas);
+    render.drawGrid(canvas);
     render.renderFPS(canvas, gameLoop.getAverageFPS());
     render.renderUPS(canvas, gameLoop.getAverageUPS());
     render.renderSnake(canvas);

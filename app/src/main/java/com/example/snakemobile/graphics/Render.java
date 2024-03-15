@@ -87,19 +87,14 @@ public class Render {
     // drawing vertical lines
     for (int i = 0; i <= customProperties.getVerticalLines(); i++) {
       int lineWidth;
-      if (i == customProperties.getVerticalLines()) {
-        lineWidth = i * UNIT_SIZE + MARGIN;
-      }
-      else {
-        lineWidth = i * UNIT_SIZE + MARGIN;
-      }
+      lineWidth = i * UNIT_SIZE + MARGIN;
       canvas.drawLine(lineWidth, 0, lineWidth, (float)SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT, paint);
     }
   }
 
   public void renderBackground(Canvas canvas) {
     int bgWidth = customProperties.getScreenWidth() - MARGIN;
-    int bgHeight = customProperties.getScreenHeight() - BOTTOM_PANEL_HEIGHT;
+    int bgHeight = customProperties.getScreenHeight() - BOTTOM_PANEL_HEIGHT - 5;
     Rect rect = new Rect(MARGIN, MARGIN, bgWidth, bgHeight);
     canvas.drawBitmap(bitMapFactory.getBackgroundImage(), null, rect, null);
   }
@@ -119,6 +114,12 @@ public class Render {
       case LEFT -> canvas.drawBitmap(bitMapFactory.getHeadLeftImg(), x, y, null);
       case RIGHT -> canvas.drawBitmap(bitMapFactory.getHeadRightImg(), x, y, null);
     }
+  }
+
+  @SuppressLint("ResourceAsColor")
+  public void renderSnakeHit(Canvas canvas) {
+    paint.setColor(R.color.magenta);
+    renderOvalInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
   }
 
   public void renderFruit(Canvas canvas) {

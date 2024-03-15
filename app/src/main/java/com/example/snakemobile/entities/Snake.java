@@ -17,7 +17,6 @@ public class Snake {
   public Snake() {
     direction = Direction.RIGHT;
     tail = new float[properties.getVerticalLines() * properties.getHorizontalLines()][2];
-    System.out.println("verical = " + properties.getVerticalLines());
     this.xHead = 0;
     this.yHead = 0;
     this.hitWall = false;
@@ -82,12 +81,6 @@ public class Snake {
     if (yHead > properties.getHorizontalLines() - 1 || yHead < 0 ||
         xHead < 0 || xHead > properties.getVerticalLines() - 1)
       hitWall = true;
-    //    if (yHead < 0)
-    //      yHead = NUM_HORIZONTAL_LINES - 1.0f;
-    //    if (xHead > NUM_VERTICAL_LINES - 1)
-    //      xHead = 0;
-    //    if (xHead < 0)
-    //      xHead = NUM_VERTICAL_LINES - 1.0f;
 
     tail[0][0] = xHead;
     tail[0][1] = yHead;
