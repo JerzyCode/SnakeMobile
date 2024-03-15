@@ -9,9 +9,9 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import com.example.snakemobile.controls.GestureListener;
+import com.example.snakemobile.entities.Fruit;
+import com.example.snakemobile.entities.Snake;
 import com.example.snakemobile.graphics.Render;
-import com.example.snakemobile.objects.Fruit;
-import com.example.snakemobile.objects.Snake;
 import com.example.snakemobile.utils.CustomProperties;
 
 @SuppressLint("ViewConstructor")
@@ -38,6 +38,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     gestureListener.setSnake(this.snake);
     this.render = new Render(this.snake, this.context, this.fruit);
+
     gameLoop = new GameLoop(this, surfaceHolder);
     setFocusable(true);
   }
@@ -74,12 +75,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   @Override
   public void draw(Canvas canvas) {
     super.draw(canvas);
-    //    drawer.drawGrid(canvas);
-    render.drawFPS(canvas, gameLoop.getAverageFPS());
-    render.drawUPS(canvas, gameLoop.getAverageUPS());
+    render.renderBackground(canvas);
+    render.drawGrid(canvas);
+    render.renderFPS(canvas, gameLoop.getAverageFPS());
+    render.renderUPS(canvas, gameLoop.getAverageUPS());
     render.renderSnake(canvas);
     render.renderFruit(canvas);
-    render.drawScore(canvas, score);
+    render.renderScore(canvas, score);
   }
 
   public void update() {

@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import androidx.core.content.ContextCompat;
 import com.example.snakemobile.R;
-import com.example.snakemobile.objects.Fruit;
-import com.example.snakemobile.objects.Snake;
+import com.example.snakemobile.entities.Fruit;
+import com.example.snakemobile.entities.Snake;
 import com.example.snakemobile.utils.CustomProperties;
 
 import static com.example.snakemobile.utils.Constants.*;
@@ -15,42 +15,43 @@ public class Render {
   private final Snake snake;
   private Fruit fruit;
   private final Context context;
+  private final BitMapFactory bitMapFactory;
   private static final CustomProperties customProperties = CustomProperties.get();
   private static final int SCREEN_WIDTH = customProperties.getScreenWidth();
   private static final int SCREEN_HEIGHT = customProperties.getScreenHeight();
   private static final int CELL_WIDTH = customProperties.getCellWidth();
   private static final int CELL_HEIGHT = customProperties.getCellHeight();
+  private final Paint paint;
 
   public Render(Snake snake, Context context, Fruit fruit) {
     this.fruit = fruit;
     this.context = context;
     this.snake = snake;
+    this.paint = new Paint();
+    this.bitMapFactory = new BitMapFactory(context);
   }
 
   public void setFruit(Fruit fruit) {
     this.fruit = fruit;
   }
 
-  public void drawUPS(Canvas canvas, double ups) {
+  public void renderUPS(Canvas canvas, double ups) {
     String averageUPS = Double.toString(ups);
-    Paint paint = new Paint();
     int color = ContextCompat.getColor(context, R.color.magenta);
     paint.setColor(color);
     paint.setTextSize(50);
     canvas.drawText("UPS: " + averageUPS, 100, 60, paint);
   }
 
-  public void drawFPS(Canvas canvas, double fps) {
+  public void renderFPS(Canvas canvas, double fps) {
     String averageFPS = Double.toString(fps);
-    Paint paint = new Paint();
     int color = ContextCompat.getColor(context, R.color.magenta);
     paint.setColor(color);
     paint.setTextSize(50);
     canvas.drawText("FPS: " + averageFPS, 100, 115, paint);
   }
 
-  public void drawScore(Canvas canvas, int score) {
-    Paint paint = new Paint();
+  public void renderScore(Canvas canvas, int score) {
     int color = ContextCompat.getColor(context, R.color.magenta);
     paint.setColor(color);
     paint.setTextSize(50);
@@ -61,21 +62,17 @@ public class Render {
   }
 
   public void renderGameOver(Canvas canvas) {
-    System.out.println("Draw Game Over");
-    Paint paint = new Paint();
     int color = ContextCompat.getColor(context, R.color.red);
     paint.setColor(color);
     paint.setTextSize(150);
     int x = CELL_WIDTH;
     int y = SCREEN_HEIGHT / 2;
-    System.out.println(String.format("x=%d, y=%d", x, y));
     canvas.drawText("GAME OVER", x, y, paint);
     paint.setTextSize(50);
     canvas.drawText("Press anywhere to back to main menu.", CELL_WIDTH - 5f, y + 80.0f, paint);
   }
 
   public void drawGrid(Canvas canvas) {
-    Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.white));
     paint.setTextSize(50);
 
@@ -99,6 +96,10 @@ public class Render {
     }
   }
 
+  public void renderBackground(Canvas canvas) {
+    canvas.drawBitmap(bitMapFactory.getBackgroundImage(), 0, 0, null);
+  }
+
   public void renderSnake(Canvas canvas) {
     renderSnakeTail(canvas);
     renderSnakeHead(canvas);
@@ -109,7 +110,6 @@ public class Render {
   }
 
   private void renderSnakeTail(Canvas canvas) {
-    Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.green));
     float[][] tail = snake.getTail();
     int length = snake.getLength();
@@ -119,13 +119,11 @@ public class Render {
   }
 
   private void renderSnakeHead(Canvas canvas, int color) {
-    Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, color));
-    renderOvalInCell(canvas, fruit.getX(), fruit.getY(), paint);
+    renderRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
   }
 
   public void renderFruit(Canvas canvas) {
-    Paint paint = new Paint();
     paint.setColor(ContextCompat.getColor(context, R.color.yellow));
     renderOvalInCell(canvas, fruit.getX(), fruit.getY(), paint);
   }

@@ -1,9 +1,6 @@
-package com.example.snakemobile.objects;
+package com.example.snakemobile.entities;
 
 import com.example.snakemobile.controls.Direction;
-
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 import static com.example.snakemobile.utils.Constants.NUM_HORIZONTAL_LINES;
 import static com.example.snakemobile.utils.Constants.NUM_VERTICAL_LINES;
@@ -16,11 +13,9 @@ public class Snake {
   private final float[][] tail;
   private int length;
   private boolean moved;
-  private Queue<Direction> changeDirectionQueue;
 
   public Snake() {
     direction = Direction.RIGHT;
-    changeDirectionQueue = new PriorityQueue<>();
     tail = new float[NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES][2];
     this.xHead = 0;
     this.yHead = 0;
@@ -59,10 +54,6 @@ public class Snake {
 
   public void setMoved(boolean moved) {
     this.moved = moved;
-  }
-
-  public void addDirection(Direction direction) {
-    changeDirectionQueue.add(direction);
   }
 
   public void move() {
