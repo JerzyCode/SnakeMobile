@@ -1,9 +1,8 @@
 package com.example.snakemobile.entities;
 
-import java.util.Random;
+import com.example.snakemobile.utils.CustomProperties;
 
-import static com.example.snakemobile.utils.Constants.NUM_HORIZONTAL_LINES;
-import static com.example.snakemobile.utils.Constants.NUM_VERTICAL_LINES;
+import java.util.Random;
 
 public class Fruit {
 
@@ -11,14 +10,15 @@ public class Fruit {
   private final int y;
   private static final Random random = new Random();
   private final float[][] snakeTail;
+  private final CustomProperties properties = CustomProperties.get();
 
   public Fruit(float[][] snakeTail) {
     this.snakeTail = snakeTail;
-    int randX = random.nextInt(NUM_VERTICAL_LINES - 1);
-    int randY = random.nextInt(NUM_HORIZONTAL_LINES - 1);
+    int randX = random.nextInt(properties.getVerticalLines() - 2) + 1;
+    int randY = random.nextInt(properties.getHorizontalLines() - 2) + 1;
     while (!areProperCoordinates(randX, randY)) {
-      randX = random.nextInt(NUM_VERTICAL_LINES - 1);
-      randY = random.nextInt(NUM_HORIZONTAL_LINES - 1);
+      randX = random.nextInt(properties.getVerticalLines() - 2) + 1;
+      randY = random.nextInt(properties.getHorizontalLines() - 2) + 1;
     }
     this.x = randX;
     this.y = randY;

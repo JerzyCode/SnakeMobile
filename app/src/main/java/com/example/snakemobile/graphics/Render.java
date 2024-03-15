@@ -1,8 +1,11 @@
 package com.example.snakemobile.graphics;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import androidx.core.content.ContextCompat;
 import com.example.snakemobile.R;
 import com.example.snakemobile.entities.Fruit;
@@ -19,8 +22,6 @@ public class Render {
   private static final CustomProperties customProperties = CustomProperties.get();
   private static final int SCREEN_WIDTH = customProperties.getScreenWidth();
   private static final int SCREEN_HEIGHT = customProperties.getScreenHeight();
-  private static final int CELL_WIDTH = customProperties.getCellWidth();
-  private static final int CELL_HEIGHT = customProperties.getCellHeight();
   private final Paint paint;
 
   public Render(Snake snake, Context context, Fruit fruit) {
@@ -65,11 +66,11 @@ public class Render {
     int color = ContextCompat.getColor(context, R.color.red);
     paint.setColor(color);
     paint.setTextSize(150);
-    int x = CELL_WIDTH;
+    int x = UNIT_SIZE;
     int y = SCREEN_HEIGHT / 2;
     canvas.drawText("GAME OVER", x, y, paint);
     paint.setTextSize(50);
-    canvas.drawText("Press anywhere to back to main menu.", CELL_WIDTH - 5f, y + 80.0f, paint);
+    canvas.drawText("Press anywhere to back to main menu.", UNIT_SIZE - 5f, y + 80.0f, paint);
   }
 
   public void drawGrid(Canvas canvas) {
@@ -77,46 +78,41 @@ public class Render {
     paint.setTextSize(50);
 
     // drawing horizontal lines
-    for (int i = 0; i <= NUM_HORIZONTAL_LINES; i++) {
+    for (int i = 0; i <= customProperties.getHorizontalLines(); i++) {
       int lineHeight;
-      lineHeight = i * CELL_HEIGHT;
+      lineHeight = i * UNIT_SIZE + MARGIN;
       canvas.drawLine(0, lineHeight, SCREEN_WIDTH, lineHeight, paint);
     }
 
     // drawing vertical lines
-    for (int i = 0; i <= NUM_VERTICAL_LINES; i++) {
+    for (int i = 0; i <= customProperties.getVerticalLines(); i++) {
       int lineWidth;
-      if (i == NUM_VERTICAL_LINES) {
-        lineWidth = i * CELL_WIDTH - 1;
+      if (i == customProperties.getVerticalLines()) {
+        lineWidth = i * UNIT_SIZE + MARGIN;
       }
       else {
-        lineWidth = i * CELL_WIDTH;
+        lineWidth = i * UNIT_SIZE + MARGIN;
       }
       canvas.drawLine(lineWidth, 0, lineWidth, (float)SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT, paint);
     }
   }
 
   public void renderBackground(Canvas canvas) {
-    canvas.drawBitmap(bitMapFactory.getBackgroundImage(), 0, 0, null);
+    int bgWidth = customProperties.getScreenWidth() - MARGIN;
+    int bgHeight = customProperties.getScreenHeight() - BOTTOM_PANEL_HEIGHT;
+    Rect rect = new Rect(MARGIN, MARGIN, bgWidth, bgHeight);
+    canvas.drawBitmap(bitMapFactory.getBackgroundImage(), null, rect, null);
   }
 
   public void renderSnake(Canvas canvas) {
-    renderSnakeTail(canvas);
     renderSnakeHead(canvas);
-  }
-
-  private void renderSnakeTail(Canvas canvas) {
-    paint.setColor(ContextCompat.getColor(context, R.color.green));
-    float[][] tail = snake.getTail();
-    int length = snake.getLength();
-    for (int i = length - 1; i >= 0; i--) {
-      renderRectangleInCell(canvas, tail[i][0], tail[i][1], paint);
-    }
+    renderSnakeBody(canvas);
+    renderSnakeTail(canvas);
   }
 
   private void renderSnakeHead(Canvas canvas) {
-    float x = snake.getxHead() * customProperties.getCellWidth();
-    float y = snake.getyHead() * customProperties.getCellHeight();
+    float x = snake.getxHead() * UNIT_SIZE + MARGIN;
+    float y = snake.getyHead() * UNIT_SIZE + MARGIN;
     switch (snake.getDirection()) {
       case DOWN -> canvas.drawBitmap(bitMapFactory.getHeadDownImg(), x, y, null);
       case UP -> canvas.drawBitmap(bitMapFactory.getHeadUpImg(), x, y, null);
@@ -131,18 +127,96 @@ public class Render {
   }
 
   private void renderRectangleInCell(Canvas canvas, float x, float y, Paint paint) {
-    float left = x * CELL_WIDTH;
-    float top = y * CELL_HEIGHT;
-    float right = left + CELL_WIDTH;
-    float bottom = top + CELL_HEIGHT;
+    float left = x * UNIT_SIZE;
+    float top = y * UNIT_SIZE;
+    float right = left + UNIT_SIZE;
+    float bottom = top + UNIT_SIZE;
     canvas.drawRect(left, top, right, bottom, paint);
   }
 
   private void renderOvalInCell(Canvas canvas, float x, float y, Paint paint) {
-    float centerX = x * CELL_WIDTH + CELL_WIDTH / 2.0f;
-    float centerY = y * CELL_HEIGHT + CELL_HEIGHT / 2.0f;
-    float radius = Math.min(CELL_WIDTH, CELL_HEIGHT) / 2.0f;
+    float centerX = x * UNIT_SIZE + UNIT_SIZE / 2.0f + MARGIN;
+    float centerY = y * UNIT_SIZE + UNIT_SIZE / 2.0f + MARGIN;
+    float radius = UNIT_SIZE / 2.0f;
     canvas.drawCircle(centerX, centerY, radius, paint);
+  }
+
+  @SuppressLint("ResourceAsColor")
+  private void renderSnakeBody(Canvas canvas) {
+    float[][] tail = snake.getTail();
+    for (int i = snake.getLength() - 3; i >= 0; i--) {
+
+      float x0 = tail[i][0];
+      float y0 = tail[i][1];
+      float x1 = tail[i + 1][0];
+      float y1 = tail[i + 1][1];
+      float x2 = tail[i + 2][0];
+      float y2 = tail[i + 2][1];
+      if (isDrawBottomLeft(x0, x1, x2, y0, y1, y2)) {
+        drawBitmapByCell(canvas, bitMapFactory.getBodyBottomLeftImg(), x1, y1);
+      }
+      else if (isDrawBottomRight(x0, x1, x2, y0, y1, y2)) {
+        drawBitmapByCell(canvas, bitMapFactory.getBodyBottomRightImg(), x1, y1);
+      }
+      else if (isDrawTopRight(x0, x1, x2, y0, y1, y2)) {
+        drawBitmapByCell(canvas, bitMapFactory.getBodyTopRightImg(), x1, y1);
+      }
+      else if (isDrawTopLeft(x0, x1, x2, y0, y1, y2)) {
+        drawBitmapByCell(canvas, bitMapFactory.getBodyTopLeftImg(), x1, y1);
+      }
+      else if (y0 == y1 && y1 == y2) {
+        drawBitmapByCell(canvas, bitMapFactory.getBodyHorizontalImg(), x1, y1);
+      }
+      else if (x0 == x1 && x1 == x2) {
+        drawBitmapByCell(canvas, bitMapFactory.getBodyVerticalImg(), x1, y1);
+      }
+
+      if (snake.isSnakeEatItself()) {
+        paint.setColor(R.color.magenta);
+        renderRectangleInCell(canvas, snake.getxHead(), snake.getyHead(), paint);
+      }
+
+    }
+  }
+
+  private void renderSnakeTail(Canvas canvas) {
+    float tailPreLastX = snake.getTail()[snake.getLength() - 2][0];
+    float tailPreLastY = snake.getTail()[snake.getLength() - 2][1];
+    float tailLastX = snake.getTail()[snake.getLength() - 1][0];
+    float tailLastY = snake.getTail()[snake.getLength() - 1][1];
+
+    if (tailPreLastX > tailLastX) {
+      drawBitmapByCell(canvas, bitMapFactory.getTailLeftImg(), tailLastX, tailLastY);
+    }
+    else if (tailPreLastX < tailLastX) {
+      drawBitmapByCell(canvas, bitMapFactory.getTailRightImg(), tailLastX, tailLastY);
+    }
+    else if (tailPreLastY < tailLastY) {
+      drawBitmapByCell(canvas, bitMapFactory.getTailDownImg(), tailLastX, tailLastY);
+    }
+    else if (tailPreLastY > tailLastY) {
+      drawBitmapByCell(canvas, bitMapFactory.getTailUpImg(), tailLastX, tailLastY);
+    }
+  }
+
+  private void drawBitmapByCell(Canvas canvas, Bitmap bitmap, float x, float y) {
+    canvas.drawBitmap(bitmap, x * UNIT_SIZE + MARGIN, y * UNIT_SIZE + MARGIN, null);
+  }
+
+  private boolean isDrawBottomLeft(float x0, float x1, float x2, float y0, float y1, float y2) {
+    return (x0 < x1 && y0 == y1 && x1 == x2 && y1 < y2) || (y0 > y1 && x0 == x1 && y1 == y2 && x1 > x2);
+  }
+
+  private boolean isDrawBottomRight(float x0, float x1, float x2, float y0, float y1, float y2) {
+    return (x0 > x1 && y0 == y1 && x1 == x2 && y1 < y2) || (y0 > y1 && x0 == x1 && y1 == y2 && x1 < x2);
+  }
+
+  private boolean isDrawTopRight(float x0, float x1, float x2, float y0, float y1, float y2) {
+    return (y0 < y1 && x0 == x1 && y1 == y2 && x1 < x2) || (x0 > x1 && y1 == y0 && x1 == x2 && y2 < y1);
+  }
+
+  private boolean isDrawTopLeft(float x0, float x1, float x2, float y0, float y1, float y2) {
+    return (y0 == y1 && x1 == x2 && x0 < x1 && y2 < y1) || (y0 < y1 && x0 == x1 && x1 > x2 && y1 == y2);
   }
 
 }

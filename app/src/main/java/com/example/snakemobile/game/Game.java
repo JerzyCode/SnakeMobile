@@ -76,7 +76,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   public void draw(Canvas canvas) {
     super.draw(canvas);
     render.renderBackground(canvas);
-    render.drawGrid(canvas);
+    //    render.drawGrid(canvas);
     render.renderFPS(canvas, gameLoop.getAverageFPS());
     render.renderUPS(canvas, gameLoop.getAverageUPS());
     render.renderSnake(canvas);
@@ -94,6 +94,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
   private void gameLogic() {
     snakeEatFruit();
     snakeEatItself();
+    snakeHitWall();
   }
 
   private void snakeEatFruit() {
@@ -107,6 +108,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
   private void snakeEatItself() {
     if (snake.isSnakeEatItself()) {
+      gameLoop.setRunning(false);
+    }
+  }
+
+  private void snakeHitWall() {
+    if (snake.isHitWall()) {
       gameLoop.setRunning(false);
     }
   }

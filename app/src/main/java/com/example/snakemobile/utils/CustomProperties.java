@@ -1,12 +1,13 @@
 package com.example.snakemobile.utils;
 
-import static com.example.snakemobile.utils.Constants.*;
+import static com.example.snakemobile.utils.Constants.MARGIN;
+import static com.example.snakemobile.utils.Constants.UNIT_SIZE;
 
 public class CustomProperties {
   private int screenHeight;
   private int screenWidth;
-  private int cellHeight;
-  private int cellWidth;
+  private int horizontalLines;
+  private int verticalLines;
 
   private static CustomProperties customProperties;
 
@@ -21,13 +22,13 @@ public class CustomProperties {
   }
 
   public void setScreenHeight(int screenHeight) {
-    this.screenHeight = screenHeight;
-    this.cellHeight = (this.screenHeight - BOTTOM_PANEL_HEIGHT) / NUM_HORIZONTAL_LINES;
+    this.screenHeight = screenHeight - 2 * MARGIN - 10;
+    this.horizontalLines = this.screenHeight / UNIT_SIZE;
   }
 
   public void setScreenWidth(int screenWidth) {
-    this.screenWidth = screenWidth;
-    this.cellWidth = (this.screenWidth) / NUM_VERTICAL_LINES;
+    this.screenWidth = screenWidth - 2 * MARGIN;
+    this.verticalLines = this.screenWidth / UNIT_SIZE;
   }
 
   public int getScreenHeight() {
@@ -38,11 +39,11 @@ public class CustomProperties {
     return screenWidth;
   }
 
-  public int getCellHeight() {
-    return cellHeight;
+  public int getHorizontalLines() {
+    return horizontalLines;
   }
 
-  public int getCellWidth() {
-    return cellWidth;
+  public int getVerticalLines() {
+    return verticalLines;
   }
 }
