@@ -2,7 +2,7 @@ package com.example.snakemobile.controls;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import com.example.snakemobile.objects.Snake;
+import com.example.snakemobile.entities.Snake;
 
 public class GestureListener extends GestureDetector.SimpleOnGestureListener {
 

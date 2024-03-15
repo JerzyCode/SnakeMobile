@@ -1,32 +1,28 @@
-package com.example.snakemobile.objects;
+package com.example.snakemobile.entities;
 
 import com.example.snakemobile.controls.Direction;
-
-import java.util.PriorityQueue;
-import java.util.Queue;
-
-import static com.example.snakemobile.utils.Constants.NUM_HORIZONTAL_LINES;
-import static com.example.snakemobile.utils.Constants.NUM_VERTICAL_LINES;
+import com.example.snakemobile.utils.CustomProperties;
 
 public class Snake {
 
+  private final CustomProperties properties = CustomProperties.get();
   private float xHead;
   private float yHead;
   private Direction direction;
   private final float[][] tail;
+  private boolean hitWall;
   private int length;
   private boolean moved;
-  private Queue<Direction> changeDirectionQueue;
 
   public Snake() {
     direction = Direction.RIGHT;
-    changeDirectionQueue = new PriorityQueue<>();
-    tail = new float[NUM_VERTICAL_LINES * NUM_HORIZONTAL_LINES][2];
+    tail = new float[properties.getVerticalLines() * properties.getHorizontalLines()][2];
     this.xHead = 0;
     this.yHead = 0;
+    this.hitWall = false;
     tail[0][0] = xHead;
     tail[0][1] = yHead;
-    length = 2;
+    length = 5;
   }
 
   public float getxHead() {
@@ -61,8 +57,8 @@ public class Snake {
     this.moved = moved;
   }
 
-  public void addDirection(Direction direction) {
-    changeDirectionQueue.add(direction);
+  public boolean isHitWall() {
+    return hitWall;
   }
 
   public void move() {
@@ -82,14 +78,9 @@ public class Snake {
       case LEFT -> xHead -= 1;
       case RIGHT -> xHead += 1;
     }
-    if (yHead > NUM_HORIZONTAL_LINES - 1)
-      yHead = 0;
-    if (yHead < 0)
-      yHead = NUM_HORIZONTAL_LINES - 1.0f;
-    if (xHead > NUM_VERTICAL_LINES - 1)
-      xHead = 0;
-    if (xHead < 0)
-      xHead = NUM_VERTICAL_LINES - 1.0f;
+    if (yHead > properties.getHorizontalLines() - 1 || yHead < 0 ||
+        xHead < 0 || xHead > properties.getVerticalLines() - 1)
+      hitWall = true;
 
     tail[0][0] = xHead;
     tail[0][1] = yHead;

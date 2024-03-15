@@ -104,7 +104,7 @@ public class GameLoop extends Thread {
 
   private void onGameOver() {
     drawOnCanvas(() -> game.draw(canvas));
-    drawOnCanvas(() -> game.getRender().renderSnakeEatItSelf(canvas));
+    drawOnCanvas(() -> game.getRender().renderSnakeHit(canvas));
     drawOnCanvas(() -> game.getRender().renderGameOver(canvas));
   }
 
